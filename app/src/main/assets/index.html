@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mi Tabata</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #2563eb;
+      --card-bg: rgba(255, 255, 255, 0.92);
+      --text: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1000&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 12px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 430px;
+      background-color: var(--card-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background-color: var(--primary);
+      color: white;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .header .subtitle {
+      font-size: 0.9rem;
+      opacity: 0.85;
+      font-weight: 500;
+    }
+
+    .config-list {
+      padding: 10px 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .config-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 148px;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      padding: 10px 0;
+      min-height: 50px;
+    }
+
+    .config-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .item-icon {
+      font-size: 1.2rem;
+      width: 26px;
+      flex: 0 0 26px;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .item-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .controls {
+      width: 148px;
+      display: grid;
+      grid-template-columns: 32px 72px 32px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .btn-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background-color: var(--primary);
+      color: white;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-circle:active {
+      transform: scale(0.92);
+      background-color: var(--primary-light);
+    }
+
+    .time-inputs {
+      width: 72px;
+      height: 32px;
+      display: grid;
+      grid-template-columns: 1fr 8px 1fr;
+      align-items: center;
+      gap: 0;
+      background: #f8fafc;
+      padding: 0 4px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      overflow: hidden;
+    }
+
+    .time-input {
+      width: 100%;
+      min-width: 0;
+      border: none;
+      background: transparent;
+      font-size: 0.98rem;
+      font-weight: 800;
+      text-align: center;
+      color: var(--text);
+      outline: none;
+      padding: 0;
+      font-variant-numeric: tabular-nums;
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    .time-input::-webkit-outer-spin-button,
+    .time-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .time-input:focus {
+      background: #eef2ff;
+      border-radius: 4px;
+    }
+
+    .time-separator {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+
+    .single-value-display {
+      width: 72px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 800;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .timer-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 35px 20px;
+      text-align: center;
+    }
+
+    .phase-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .time-display {
+      font-size: 5rem;
+      font-weight: 900;
+      margin: 12px 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stats {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .actions {
+      padding: 12px 16px 16px;
+      border-top: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .action-btn {
+      width: 100%;
+      margin: 0;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background-color: var(--primary);
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .action-btn:hover {
+      background-color: var(--primary-light);
+    }
+
+    .action-btn:active {
+      transform: scale(0.98);
+    }
+
+    @media (hover: hover) {
+      .btn-circle:hover {
+        background-color: var(--primary-light);
+      }
+    }
+
+    @media (max-width: 390px) {
+      body {
+        padding: 8px;
+      }
+
+      .container {
+        border-radius: 16px;
+      }
+
+      .config-list {
+        padding: 8px 12px;
+      }
+
+      .actions {
+        padding: 10px 12px 12px;
+      }
+
+      .config-item {
+        grid-template-columns: minmax(0, 1fr) 142px;
+        gap: 6px;
+      }
+
+      .controls {
+        width: 142px;
+        grid-template-columns: 30px 70px 30px;
+      }
+
+      .btn-circle {
+        width: 30px;
+        height: 30px;
+      }
+
+      .time-inputs,
+      .single-value-display {
+        width: 70px;
+        height: 30px;
+      }
+
+      .item-label {
+        font-size: 0.84rem;
+      }
+    }
+
+    .btn-danger {
+      background-color: #ef4444;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    }
+
+    .bg-preparados { color: #d97706; }
+    .bg-trabajo { color: #16a34a; }
+    .bg-descanso { color: #2563eb; }
+    .bg-descanso-series { color: #7c3aed; }
+    .bg-finalizado { color: #dc2626; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>Mi Tabata</h1>
+      <div class="subtitle" id="total-time-text">Tiempo total: 00:00</div>
+    </div>
+
+    <div id="setup-screen">
+      <div class="config-list">
+        
+        <!-- 1. Preparados -->
+        <div class="config-item">
+          <div class="item-info">
+            <span class="item-icon">🏃</span>
+            <span class="item-label">1. Preparados</span>
+          </div>
+          <div class="controls">
+            <button class="btn-circle" aria-label="Restar 5 segundos a Preparados" onclick="adjustTime('prep', -5)">−</button>
+            <div class="time-inputs">
+              <input type="number" id="prep-m" class="time-input" inputmode="numeric" aria-label="Minutos de preparación" value="00" min="0" max="99" onchange="validateAndUpdate('prep')">
+              <span class="time-separator">:</span>
+              <input type="number" id="prep-s" class="time-input" inputmode="numeric" aria-label="Segundos de preparación" value="10" min="0" max="59" onchange="validateAndUpdate('prep')">
+            </div>
+            <button class="btn-circle" aria-label="Sumar 5 segundos a Preparados" onclick="adjustTime('prep', 5)">+</button>
+          </div>
+        </div>
+
+        <!-- 2. Trabajo -->
+        <div class="config-item">
+          <div class="item-info">
+            <span class="item-icon">🏋️</span>
+            <span class="item-label">2. Trabajo</span>
+          </div>
+          <div class="controls">
+            <button class="btn-circle" aria-label="Restar 5 segundos a Trabajo" onclick="adjustTime('work', -5)">−</button>
+            <div class="time-inputs">
+              <input type="number" id="work-m" class="time-input" inputmode="numeric" aria-label="Minutos de trabajo" value="00" min="0" max="99" onchange="validateAndUpdate('work')">
+              <span class="time-separator">:</span>
+              <input type="number" id="work-s" class="time-input" inputmode="numeric" aria-label="Segundos de trabajo" value="20" min="0" max="59" onchange="validateAndUpdate('work')">
+            </div>
+            <button class="btn-circle" aria-label="Sumar 5 segundos a Trabajo" onclick="adjustTime('work', 5)">+</button>
+          </div>
+        </div>
+
+        <!-- 3. Descanso corto -->
+        <div class="config-item">
+          <div class="item-info">
+            <span class="item-icon">⏱️</span>
+            <span class="item-label">3. Descanso corto</span>
+          </div>
+          <div class="controls">
+            <button class="btn-circle" aria-label="Restar 5 segundos a Descanso corto" onclick="adjustTime('rest', -5)">−</button>
+            <div class="time-inputs">
+              <input type="number" id="rest-m" class="time-input" inputmode="numeric" aria-label="Minutos de descanso corto" value="00" min="0" max="99" onchange="validateAndUpdate('rest')">
+              <span class="time-separator">:</span>
+              <input type="number" id="rest-s" class="time-input" inputmode="numeric" aria-label="Segundos de descanso corto" value="10" min="0" max="59" onchange="validateAndUpdate('rest')">
+            </div>
+            <button class="btn-circle" aria-label="Sumar 5 segundos a Descanso corto" onclick="adjustTime('rest', 5)">+</button>
+          </div>
+        </div>
+
+        <!-- 4. Ciclos por serie -->
+        <div class="config-item">
+          <div class="item-info">
+            <span class="item-icon">🔄</span>
+            <span class="item-label">4. Ciclos por serie</span>
+          </div>
+          <div class="controls">
+            <button class="btn-circle" aria-label="Restar un ciclo" onclick="adjustCycles(-1)">−</button>
+            <span class="single-value-display" id="val-cycles">4</span>
+            <button class="btn-circle" aria-label="Sumar un ciclo" onclick="adjustCycles(1)">+</button>
+          </div>
+        </div>
+
+        <!-- 5. Descanso entre series -->
+        <div class="config-item">
+          <div class="item-info">
+            <span class="item-icon">☕</span>
+            <span class="item-label">5. Descanso e/series</span>
+          </div>
+          <div class="controls">
+            <button class="btn-circle" aria-label="Restar 5 segundos al descanso entre series" onclick="adjustTime('setsRest', -5)">−</button>
+            <div class="time-inputs">
+              <input type="number" id="setsRest-m" class="time-input" inputmode="numeric" aria-label="Minutos de descanso entre series" value="01" min="0" max="99" onchange="validateAndUpdate('setsRest')">
+              <span class="time-separator">:</span>
+              <input type="number" id="setsRest-s" class="time-input" inputmode="numeric" aria-label="Segundos de descanso entre series" value="00" min="0" max="59" onchange="validateAndUpdate('setsRest')">
+            </div>
+            <button class="btn-circle" aria-label="Sumar 5 segundos al descanso entre series" onclick="adjustTime('setsRest', 5)">+</button>
+          </div>
+        </div>
+
+        <!-- 6. Total de series -->
+        <div class="config-item">
+          <div class="item-info">
+            <span class="item-icon">🔢</span>
+            <span class="item-label">6. Total de series</span>
+          </div>
+          <div class="controls">
+            <button class="btn-circle" aria-label="Restar una serie" onclick="adjustSets(-1)">−</button>
+            <span class="single-value-display" id="val-sets">3</span>
+            <button class="btn-circle" aria-label="Sumar una serie" onclick="adjustSets(1)">+</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="actions">
+        <button class="action-btn" onclick="startWorkout()">¡INICIAR ENTRENAMIENTO!</button>
+      </div>
+    </div>
+
+    <!-- PANTALLA CRONÓMETRO -->
+    <div id="timer-screen" class="timer-screen">
+      <div id="phase-title" class="phase-title bg-preparados">PREPARADOS</div>
+      <div id="time-display" class="time-display">00:10</div>
+      <div id="stats-display" class="stats">
+        Serie 1 de 3<br>
+        <span id="cycle-stat">Ciclo 1 de 4</span>
+      </div>
+      <button class="action-btn btn-danger" onclick="stopWorkout()">CANCELAR</button>
+    </div>
+  </div>
+
+  <script>
+    let cyclesPerSet = 4;
+    let totalSets = 3;
+
+    let timerInterval = null;
+    let currentPhase = '';
+    let currentSet = 1;
+    let currentCycle = 1;
+    let timeLeft = 0;
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playBeep(freq = 600, type = 'sine', duration = 0.12) {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playBoxingBell() {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1200, now);
+
+      gain.gain.setValueAtTime(0.8, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(now);
+      osc.stop(now + 1.2);
+    }
+
+    function playFinalBoxingBell() {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const now = audioCtx.currentTime;
+      [0, 0.3, 0.6].forEach(delay => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1200, now + delay);
+
+        gain.gain.setValueAtTime(0.8, now + delay);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + 1.0);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now + delay);
+        osc.stop(now + delay + 1.0);
+      });
+    }
+
+    function speakFinalMessage() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance('Finalizaste el ejercicio');
+        utterance.lang = 'es-ES';
+        utterance.rate = 0.95;
+        utterance.pitch = 1;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function getSeconds(key) {
+      const m = parseInt(document.getElementById(`${key}-m`).value) || 0;
+      const s = parseInt(document.getElementById(`${key}-s`).value) || 0;
+      return (m * 60) + s;
+    }
+
+    function setSeconds(key, totalSecs) {
+      if (totalSecs < 0) totalSecs = 0;
+      const m = Math.floor(totalSecs / 60);
+      const s = totalSecs % 60;
+      document.getElementById(`${key}-m`).value = String(m).padStart(2, '0');
+      document.getElementById(`${key}-s`).value = String(s).padStart(2, '0');
+    }
+
+    function validateAndUpdate(key) {
+      let m = parseInt(document.getElementById(`${key}-m`).value) || 0;
+      let s = parseInt(document.getElementById(`${key}-s`).value) || 0;
+
+      if (s >= 60) {
+        m += Math.floor(s / 60);
+        s = s % 60;
+      }
+
+      document.getElementById(`${key}-m`).value = String(m).padStart(2, '0');
+      document.getElementById(`${key}-s`).value = String(s).padStart(2, '0');
+      calculateTotalTime();
+    }
+
+    function adjustTime(key, deltaSeconds) {
+      let currentTotal = getSeconds(key);
+      let newTotal = currentTotal + deltaSeconds;
+      if (newTotal < 1) newTotal = 1;
+      setSeconds(key, newTotal);
+      calculateTotalTime();
+    }
+
+    function adjustCycles(delta) {
+      cyclesPerSet += delta;
+      if (cyclesPerSet < 1) cyclesPerSet = 1;
+      document.getElementById('val-cycles').innerText = cyclesPerSet;
+      calculateTotalTime();
+    }
+
+    function adjustSets(delta) {
+      totalSets += delta;
+      if (totalSets < 1) totalSets = 1;
+      document.getElementById('val-sets').innerText = totalSets;
+      calculateTotalTime();
+    }
+
+    function formatMMSS(totalSeconds) {
+      const m = Math.floor(totalSeconds / 60);
+      const s = totalSeconds % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function calculateTotalTime() {
+      const prep = getSeconds('prep');
+      const work = getSeconds('work');
+      const rest = getSeconds('rest');
+      const setsRest = getSeconds('setsRest');
+
+      const durationOneSet = (work * cyclesPerSet) + (rest * (cyclesPerSet - 1));
+      
+      const totalSecs = prep + (durationOneSet * totalSets) + (setsRest * (totalSets - 1));
+      document.getElementById('total-time-text').innerText = `Tiempo total: ${formatMMSS(totalSecs)}`;
+    }
+
+    function startWorkout() {
+      document.getElementById('setup-screen').style.display = 'none';
+      document.getElementById('timer-screen').style.display = 'flex';
+      
+      currentSet = 1;
+      currentCycle = 1;
+      setPhase('PREPARADOS', getSeconds('prep'), 'bg-preparados');
+      runTimer();
+    }
+
+    function setPhase(name, duration, colorClass) {
+      currentPhase = name;
+      timeLeft = duration;
+      
+      const titleEl = document.getElementById('phase-title');
+      titleEl.innerText = name;
+      titleEl.className = `phase-title ${colorClass}`;
+      
+      const statsEl = document.getElementById('stats-display');
+      if (name === 'DESCANSO ENTRE SERIES') {
+        statsEl.innerHTML = `Completada Serie ${currentSet - 1} de ${totalSets}<br><span>Siguiente: Serie ${currentSet}</span>`;
+      } else if (name === '¡FINALIZADO!') {
+        statsEl.innerHTML = `¡Entrenamiento completado con éxito! 💪🏆`;
+      } else {
+        statsEl.innerHTML = `Serie ${currentSet} de ${totalSets}<br><span>Ciclo ${currentCycle} de ${cyclesPerSet}</span>`;
+      }
+
+      updateTimeDisplay();
+
+      if (name === 'TRABAJO') {
+        playBoxingBell();
+      }
+    }
+
+    function updateTimeDisplay() {
+      document.getElementById('time-display').innerText = formatMMSS(timeLeft);
+    }
+
+    function runTimer() {
+      clearInterval(timerInterval);
+      
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimeDisplay();
+
+        if (timeLeft <= 5 && timeLeft > 0) {
+          playBeep(700, 'sine', 0.12);
+        }
+
+        if (timeLeft <= 0) {
+          nextPhase();
+        }
+      }, 1000);
+    }
+
+    function nextPhase() {
+      if (currentPhase === 'PREPARADOS') {
+        setPhase('TRABAJO', getSeconds('work'), 'bg-trabajo');
+      } 
+      else if (currentPhase === 'TRABAJO') {
+        if (currentCycle < cyclesPerSet) {
+          setPhase('DESCANSO', getSeconds('rest'), 'bg-descanso');
+        } else {
+          if (currentSet < totalSets) {
+            currentSet++;
+            currentCycle = 1;
+            setPhase('DESCANSO ENTRE SERIES', getSeconds('setsRest'), 'bg-descanso-series');
+          } else {
+            finishWorkout();
+          }
+        }
+      } 
+      else if (currentPhase === 'DESCANSO') {
+        currentCycle++;
+        setPhase('TRABAJO', getSeconds('work'), 'bg-trabajo');
+      } 
+      else if (currentPhase === 'DESCANSO ENTRE SERIES') {
+        setPhase('TRABAJO', getSeconds('work'), 'bg-trabajo');
+      }
+    }
+
+    function finishWorkout() {
+      clearInterval(timerInterval);
+      
+      setPhase('¡FINALIZADO!', 0, 'bg-finalizado');
+
+      playFinalBoxingBell();
+
+      setTimeout(() => {
+        speakFinalMessage();
+      }, 1000);
+    }
+
+    function stopWorkout() {
+      clearInterval(timerInterval);
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      document.getElementById('setup-screen').style.display = 'block';
+      document.getElementById('timer-screen').style.display = 'none';
+    }
+
+    calculateTotalTime();
+  </script>
+</body>
+</html>
